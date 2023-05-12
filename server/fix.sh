@@ -1,0 +1,1 @@
+bash -c "cp <(cat /opt/conda/lib/python3.9/site-packages/flask_pluginkit/utils.py | sed 's/isvalid/is_valid/g') /opt/conda/lib/python3.9/site-packages/flask_pluginkit/utils.py"

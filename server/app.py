@@ -57,6 +57,7 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
     app.config['SESSION_COOKIE_NAME'] = "something"
     app.config["SESSION_TYPE"] = "filesystem"
+    app.config["TEMPLATES_AUTO_RELOAD"] = True
 
     sess.init_app(app)
 
