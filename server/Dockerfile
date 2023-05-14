@@ -19,6 +19,8 @@ RUN pip install is-safe-url
 RUN pip install tensorflow
 RUN pip install tensorflow-recommenders
 
+RUN pip install flask-cors
+
 RUN bash -c "cp <(cat /opt/conda/lib/python3.9/site-packages/flask_pluginkit/utils.py | sed 's/isvalid/is_valid/g') /opt/conda/lib/python3.9/site-packages/flask_pluginkit/utils.py"
 
 EXPOSE 5555

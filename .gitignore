@@ -10,3 +10,4 @@ server/instance/
 *.sqlite
 img
 cache
+node_modules/

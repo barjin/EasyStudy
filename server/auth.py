@@ -2,6 +2,7 @@ import flask
 
 from flask_login import login_required, current_user, login_user, logout_user
 from is_safe_url import is_safe_url
+from flask_wtf.csrf import generate_csrf
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -9,6 +10,18 @@ from app import db
 from models import User, LoginForm, SignupForm
 
 auth = flask.Blueprint('auth', __name__)
+
+@auth.route("/csrf")
+def get_csrf():
+    response = flask.jsonify({'csrfToken': generate_csrf()})
+    return response
+
+@auth.route('/current_user')
+def get_current_user():
+    if current_user.is_authenticated:
+        return flask.jsonify({'authenticated': True, 'email': current_user.email})
+    else:
+        return flask.jsonify({'authenticated': False, 'email': ''})
 
 @auth.route('/login', methods=['POST'])
 def login_post():
@@ -25,7 +38,7 @@ def login_post():
                 db.session.commit()
                 login_user(user, remember=True)
             else:
-                return "Invalid username or password"
+                return flask.jsonify({'success': False, 'message': 'Invalid username or password'})
 
             next = flask.request.args.get('next')
             # is_safe_url should check if the url is safe for redirects.
@@ -36,9 +49,9 @@ def login_post():
 
             return flask.redirect(next or flask.url_for('main.administration'))
         else:
-            return "Invalid username or password"
+            return flask.jsonify({'success': False, 'message': 'Invalid username or password'})
     else:
-        return "Invalid username or password"
+        return flask.jsonify({'success': False, 'message': 'Invalid username or password'})
 
 @auth.route('/login')
 def login():
@@ -71,9 +84,7 @@ def signup_post():
         user = User.query.filter_by(email=form.email.data).first() # if this returns a user, then the email already exists in database
 
         if user: # if a user is found, we want to redirect back to signup page so user can try again  
-            #flask.flash('Email address already exists')
-            #print("AA")
-            return "The user already exists" #flask.redirect(flask.url_for('auth.signup'))
+            return flask.jsonify({'success': False, 'message': 'This user already exists.'})
 
         # create new user with the form data. Hash the password so plaintext version isn't saved.
         new_user = User(email=form.email.data, password=generate_password_hash(form.password.data, method='sha256'))
@@ -86,4 +97,4 @@ def signup_post():
     else:
         print("Not passed")
         print(form.errors)
-        return "The password is too short"
+        return flask.jsonify({'success': False, 'message': 'The form data is not valid.'})

@@ -3,6 +3,7 @@ from flask_pluginkit import PluginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
+from flask_cors import CORS
 
 from flask_session import Session
 
@@ -55,7 +56,7 @@ def create_app():
 
     app.config['SECRET_KEY'] = '8bf29bd88d0bfb94509f5fb0'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
-    app.config['SESSION_COOKIE_NAME'] = "something"
+    app.config['SESSION_COOKIE_NAME'] = "session_cookie"
     app.config["SESSION_TYPE"] = "filesystem"
     app.config["TEMPLATES_AUTO_RELOAD"] = True
 
@@ -68,6 +69,8 @@ def create_app():
     login_manager = LoginManager(app)
     
     pm.init_app(app)
+
+    CORS(app, supports_credentials=True)
 
 
     from models import User

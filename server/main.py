@@ -3,7 +3,6 @@ import flask
 from flask_login import current_user, login_required
 
 import secrets
-
 import sqlalchemy
 
 from app import pm, db
