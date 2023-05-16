@@ -4,6 +4,8 @@ import { useCallback, useState } from 'react';
 import { Alert } from 'react-bootstrap';
 import { asyncSubmitForm } from '../../utils/asyncFormSubmit';
 
+import { getURL } from '../../utils/getRootURL';
+
 export function Signup() {
   const [errorMessage, setErrorMessage] = useState<string|null>(null);
 

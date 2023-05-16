@@ -1,5 +1,4 @@
-import { Container, Row, Col, Button, Form } from "react-bootstrap";
-import { useState, useEffect } from 'react';
+import { Row, Col, Button } from "react-bootstrap";
 
 export function Home() {
 

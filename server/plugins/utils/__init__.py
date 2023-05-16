@@ -2,7 +2,7 @@
 
 import os
 import secrets
-from flask import Blueprint, jsonify, request, url_for, make_response, render_template
+from flask import Blueprint, jsonify, request, url_for, make_response, send_file, render_template
 from flask_login import current_user
 from common import get_tr, load_languages, multi_lang, load_user_study_config, load_user_study_config_by_guid
 import flask
@@ -149,12 +149,11 @@ def join():
         if "footer" in config["text_overrides"]:
             params["footer_override"] = config["text_overrides"]["footer"]
     
-    return render_template("join.html", **params)
+    return send_file("static/index.html")
 
 @bp.route("/preference-elicitation", methods=["GET", "POST"])
 @multi_lang # TODO remove? and keep only in layoutshuffling
 def preference_elicitation():
-
     assert 'continuation_url' in request.args, 'Continuation url must be provided by the consumer'
     assert 'initial_data_url' in request.args, 'Initial data url must be provided by the consumer'
     assert 'search_item_url' in request.args, 'Search item url must be provided by the consumer'
@@ -200,7 +199,7 @@ def preference_elicitation():
         if "footer" in config["text_overrides"]:
             params["footer_override"] = config["text_overrides"]["footer"]
 
-    return render_template("preference_elicitation.html", **params) # TODO remove hardcoded consuming plugin
+    return send_file("static/index.html")
 
 @bp.route("/get-initial-data", methods=["GET"])
 def get_initial_data():
@@ -355,30 +354,15 @@ def prepare_basic_statistics(n_algorithms, algorithm_names):
 # Shared implementation of "/finish" phase of the user study
 @bp.route("/finish", methods=["GET", "POST"])
 def finish():
+    return send_file("static/index.html")
+
+# Shared implementation of "/finish" phase of the user study
+@bp.route("/finish-data", methods=["GET", "POST"])
+def finish_data():
     conf = load_user_study_config(flask.session["user_study_id"])
     study_ended(flask.session["participation_id"], iteration=flask.session["iteration"])
 
     params = {}
-    tr = get_tr(languages, get_lang())
-    params["contacts"] = tr("footer_contacts")
-    params["contact"] = tr("footer_contact")
-    params["charles_university"] = tr("footer_charles_university")
-    params["cagliari_university"] = tr("footer_cagliari_university")
-    params["t1"] = tr("footer_t1")
-    params["t2"] = tr("footer_t2")
-    params["title"] = tr("finish_title")
-    params["header"] = tr("finish_header")
-    params["hint"] = tr("finish_hint")
-    params["statistics"] = tr("finish_statistics")
-    params["selected_items"] = tr("finish_selected_items")
-    params["out_of"] = tr("out_of")
-    params["selected_per_algorithm"] = tr("finish_selected_per_algorithm")
-    params["avg_rating_per_algorithm"] = tr("finish_avg_rating_per_algorithm")
-    params["selected_during_elicitation"] = tr("finish_selected_during_elicitation")
-    params["table_algo_name"] = tr("finish_table_algo_name")
-    params["table_n_selected"] = tr("finish_table_n_selected")
-    params["table_n_shown"] = tr("finish_table_n_shown")
-    params["table_avg_rating"] = tr("finish_table_avg_rating")
 
     # Prolific stuff
     if "PROLIFIC_PID" in flask.session:
@@ -404,7 +388,7 @@ def finish():
         algorithm_names = [x["displayed_name"] for x in conf["algorithm_parameters"]]
         params.update(prepare_basic_statistics(conf["n_algorithms_to_compare"], algorithm_names))
 
-    return render_template("finish.html", **params)
+    return jsonify(params)
     
 @bp.route("/movie-search", methods=["GET"])
 def movie_search():

@@ -9,7 +9,7 @@ from multiprocessing import Process
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
-from flask import Blueprint, request, redirect, render_template
+from flask import Blueprint, request, redirect, send_file
 
 __plugin_name__ = "emptytemplate"
 __version__ = "0.1.0"
@@ -28,7 +28,7 @@ bp = Blueprint(__plugin_name__, __plugin_name__, url_prefix=f"/{__plugin_name__}
 @bp.route("/join", methods=["GET"])
 def join():
     assert "guid" in request.args, "guid must be available in arguments"
-    return render_template("empty_template_join.html")
+    return send_file("static/index.html")
 
 ### Long running initialization is here ####
 def long_initialization(guid):

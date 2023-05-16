@@ -5,6 +5,7 @@ import { useCallback, useState } from 'react';
 import { Alert } from 'react-bootstrap';
 import { asyncSubmitForm } from '../../utils/asyncFormSubmit';
 import { Link } from 'react-router-dom';
+import { getURL } from '../../utils/getRootURL';
 
 export function Login() {
   const [errorMessage, setErrorMessage] = useState<string|null>(null);
@@ -13,7 +14,7 @@ export function Login() {
     event.preventDefault();
 
     try {
-      await asyncSubmitForm('http://localhost:5555/login', 
+      await asyncSubmitForm(getURL('/login'), 
         { 
           email: (event.target as any)[0].value, 
           password: (event.target as any)[1].value 
@@ -26,7 +27,7 @@ export function Login() {
   return (
     <>
     <Container>
-    <Alert variant='primary'>You don't have an account yet? <Link to="/auth/signup">Sign up now!</Link></Alert>
+    <Alert variant='primary'>You don't have an account yet? <Link to="/signup">Sign up now!</Link></Alert>
       <h1>
         Login
       </h1>

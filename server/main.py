@@ -19,9 +19,13 @@ main = flask.Blueprint('main', __name__)
 # @login_required
 def administration():
     if current_user.is_authenticated:
-        return flask.render_template("administration.html", current_user=current_user.email)
+        return flask.send_file("static/index.html")
     else:
         return flask.redirect(flask.url_for('auth.login'))
+
+@main.route("/")
+def index():
+        return flask.send_file("static/index.html")
     
 # @main.route("/", methods=["GET"])
 # def index():

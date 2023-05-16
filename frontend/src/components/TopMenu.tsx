@@ -4,11 +4,12 @@ import Nav from "react-bootstrap/Nav";
 
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from "react";
+import { getURL } from "../utils/getRootURL";
 
 export function TopMenu() {
     const [currentUser, setCurrentUser] = useState<string|null>(null);
     useEffect(() => {
-        fetch('http://localhost:5555/current_user', {
+        fetch(getURL('current_user'), {
             credentials: 'include',
         })
             .then(r => r.json())
@@ -42,13 +43,13 @@ export function TopMenu() {
                 currentUser !== null ?
                 (
                 <>
-                    <strong>Signed in as {currentUser}</strong> (<a href="http://localhost:5555/logout">Logout?</a>)                
+                    <strong>Signed in as {currentUser}</strong> (<a href={getURL('/logout')}>Logout?</a>)                
                 </>
                 ) :
                 (
                 <Nav>
-                    <Link to="auth/signup" className="nav-link">Sign up</Link>
-                    <Link to="auth/login" className="nav-link">Login</Link>
+                    <Link to="/signup" className="nav-link">Sign up</Link>
+                    <Link to="/login" className="nav-link">Login</Link>
                 </Nav>
                 )
             }

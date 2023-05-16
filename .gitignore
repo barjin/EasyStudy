@@ -11,3 +11,6 @@ server/instance/
 img
 cache
 node_modules/
+frontend/build
+server/static
+!server/static/datasets

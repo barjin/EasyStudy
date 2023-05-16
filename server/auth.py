@@ -56,7 +56,7 @@ def login_post():
 @auth.route('/login')
 def login():
     print("Login html is called")
-    return flask.render_template('login.html', authenticated=current_user.is_authenticated)
+    return flask.send_file("static/index.html")
 
 @auth.route("/logout")
 @login_required

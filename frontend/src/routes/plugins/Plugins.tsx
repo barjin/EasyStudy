@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react';
 import { Alert, Table } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
+import { getURL } from '../../utils/getRootURL';
+
 export function Plugins() {
   const [availablePlugins, setAvailablePlugins] = useState<any[]|null>(null);
   const [filteredPlugins, setFilteredPlugins] = useState<any[]|null>(null);

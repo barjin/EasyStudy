@@ -21,7 +21,7 @@ from models import UserStudy
 
 
 import os
-from flask import Blueprint, jsonify, request, redirect, url_for, make_response, render_template, session
+from flask import Blueprint, jsonify, request, redirect, url_for, make_response, session, send_file
 
 from common import get_tr, load_languages, multi_lang, load_user_study_config
 
@@ -107,7 +107,7 @@ def create():
         "algorithm_comparison_placeholder": tr("fastcompare_create_algorithm_comparison_placeholder"),
         "finished_text_placeholder": tr("fastcompare_create_finished_text_placeholder")
     }
-    return render_template("fastcompare_create.html", **params)
+    return send_file("static/index.html")
 
 @bp.route("/available-algorithms")
 def available_algorithms():
@@ -189,7 +189,6 @@ def get_initial_data():
     el_movies.extend(x)
     session["elicitation_movies"] = el_movies
 
-    # TODO to do lazy loading, return just X and update rows & items in JS directly
     return jsonify(el_movies)
 
 # Public facing endpoint
@@ -439,7 +438,74 @@ def compare_algorithms():
         if "footer" in conf["text_overrides"]:
             params["footer_override"] = conf["text_overrides"]["footer"]
 
-    return render_template("compare_algorithms.html", **params)
+    return send_file("static/index.html")
+
+@bp.route("/compare-algorithms/data", methods=["GET"])
+def comp():
+    
+    if session["iteration"] == 1:
+        # TODO move to utils
+        elicitation_ended(session["elicitation_movies"], session["elicitation_selected_movies"])    
+        pass
+
+    conf = load_user_study_config(session["user_study_id"])
+    algorithm_assignment = {}
+    movies = {}
+
+    p = session["permutation"][0]
+
+    
+    for i, algorithm in enumerate(conf["selected_algorithms"]):
+        algorithm_displayed_name = conf["algorithm_parameters"][i]["displayed_name"]
+        if session["movies"][algorithm_displayed_name][-1]:
+            # Only non-empty makes it to the results
+            movies[algorithm_displayed_name] = {
+                "movies": session["movies"][algorithm_displayed_name][-1],
+                "order": p[algorithm_displayed_name]
+            }
+            algorithm_assignment[str(i)] = {
+                "algorithm": algorithm,
+                "name": algorithm_displayed_name,
+                "order": p[algorithm_displayed_name]
+            }
+
+    result_layout = conf["result_layout"]
+
+    # In some sense, we can treat this as iteration start
+    # TODO fix that we have two algorithms, add weights and fix algorithm_assignment (randomly assigning with each iteration)
+    shown_movie_indices = {}
+    for algo_name, movie_lists in session["movies"].items():
+        shown_movie_indices[algo_name] = [[int(x["movie_idx"]) for x in movie_list] for movie_list in movie_lists]
+        
+    iteration_started(session["iteration"], movies, algorithm_assignment, result_layout, shown_movie_indices)
+
+    tr = get_tr(languages, get_lang())
+    for d in movies.values():
+        x = d["movies"]
+        for i in range(len(x)):
+            input_name = f"{conf['selected_data_loader']}_{x[i]['movie_id']}"
+            x[i]["movie"] = tr(input_name, x[i]['movie']) + " " + "|".join([tr(f"genre_{y.lower()}") for y in x[i]["genres"]])
+            #x[i]["movie"] = tr(str(x[i]["movie_id"])) + " " + "|".join([tr(f"genre_{y.lower()}") for y in x[i]["genres"]])
+
+    params = {
+        "movies": movies,
+        "iteration": session["iteration"],
+        "result_layout": result_layout,
+        "MIN_ITERATION_TO_CANCEL": len(session["permutation"]),
+        "consuming_plugin": __plugin_name__,
+    }
+
+    # Handle textual overrides
+    params["comparison_hint_override"] = None
+    params["footer_override"] = None
+    if "text_overrides" in conf:
+        if "comparison_hint" in conf["text_overrides"]:
+            params["comparison_hint_override"] = conf["text_overrides"]["comparison_hint"]
+
+        if "footer" in conf["text_overrides"]:
+            params["footer_override"] = conf["text_overrides"]["footer"]
+
+    return jsonify(params)
 
 
 # We received feedback from compare_algorithms.html
