@@ -33,7 +33,7 @@ PS: any disputes (hopefully, none should arise:-) will be governed by the law an
         e.preventDefault();
         const formData = new FormData(e.target as any);
 
-        fetch('http://localhost:5555/add-participant', {
+        fetch(getURL('add-participant'), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

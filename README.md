@@ -1,3 +1,11 @@
+# EasyStudy v2.0
+> **This repository is a fork of the EasyStudy project with a new implementation of the frontend in React.** This allows us to decouple frontend and backend code and define a proper and safe interface beween those two. 
+> 
+> More info about this rewrite and migration tutorial is in a [separate file here](./frontend/README.md).
+
+*Below follows the original README content.*
+___
+
 # About
 This is a repository with sources for the paper *EasyStudy: Framework for Easy Deployment of User Studies on Recommender Systems*
 

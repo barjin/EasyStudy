@@ -20,7 +20,7 @@ export function PreferenceElicitations() {
     const [picked, setPicked] = useState<string | null>(null);
 
     useEffect(() => {
-        fetch('http://localhost:5555/fastcompare/available-preference-elicitations')
+        fetch(getURL('fastcompare/available-preference-elicitations'))
             .then(response => response.json())
             .then(data => {
                 setPreferenceElicitations(data);

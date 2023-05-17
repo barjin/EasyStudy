@@ -1,5 +1,7 @@
+import { getURL } from "./getRootURL";
+
 export async function getCSRFToken(): Promise<string> {
-    const response = await fetch('http://localhost:5555/csrf', { 
+    const response = await fetch(getURL('csrf'), { 
       credentials: 'include',
     });
     const data = await response.json()

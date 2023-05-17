@@ -39,7 +39,7 @@ export function RecommendationAlgos() {
     const [algorithms, setAlgorithms] = useState([]);
 
     useEffect(() => {
-        fetch('http://localhost:5555/fastcompare/available-algorithms')
+        fetch(getURL(`fastcompare/available-algorithms`))
             .then(response => response.json())
             .then(data => {
                 setAlgorithms(data);

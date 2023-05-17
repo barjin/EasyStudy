@@ -14,7 +14,7 @@ export function Plugins() {
   const [searchTerm, setSearchTerm] = useState<string>('');
 
   useEffect(() => {
-    fetch('http://localhost:5555/loaded-plugins').then(r => r.json()).then(r => {
+    fetch(getURL('loaded-plugins')).then(r => r.json()).then(r => {
         setAvailablePlugins(r);
     });
   }, []);

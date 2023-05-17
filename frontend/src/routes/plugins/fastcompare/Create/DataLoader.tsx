@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { Form } from "react-bootstrap";
 import { Collapsible } from '../Create';
+import { getURL } from "../../../../utils/getRootURL";
 
 
 export function DataLoaders() {
     const [dataLoaders, setDataLoaders] = useState([]);
 
     useEffect(() => {
-        fetch('http://localhost:5555/fastcompare/available-data-loaders')
+        fetch(getURL('fastcompare/available-data-loaders'))
             .then(response => response.json())
             .then(data => setDataLoaders(data));
     }, []);
